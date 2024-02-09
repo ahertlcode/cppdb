@@ -10,4 +10,8 @@ class UserController {
         bool store(const map<string, anyType>& data) {
             return user.create(data);
         }
+
+        bool update(const map<string, anyType>& condition, const map<string, anyType>& data) {
+            return user.update(condition, data);
+        }
 };

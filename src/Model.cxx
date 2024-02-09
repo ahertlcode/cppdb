@@ -126,6 +126,38 @@ bool Model::create(const map<string, anyType>& data) {
     return adapter->executeSqlQueryNonReturn(sqlQuery);
 }
 
+bool Model::update(const map<string, anyType>& condition, const map<string, anyType>& data) {
+    if (adapter==nullptr){
+        adapter = createModel();
+    }
+
+    string tbl = getCurrentTable();
+    string sqlQuery = "update " + tbl + " SET ";
+    int l=0;
+    for(auto& pt : data) {
+        if (l < data.size()-1) {
+            sqlQuery += pt.first + "=\""+visit(anyToString{}, pt.second)+"\", ";
+        } else {
+            sqlQuery += pt.first + "=\""+visit(anyToString{}, pt.second)+"\"";
+        }
+        l += 1;
+    }
+    sqlQuery += " WHERE ";
+    int p=0;
+    for(auto& cond : condition) {
+        if(p < condition.size()-1 && condition.size() > 1) {
+            sqlQuery += cond.first + "=\""+visit(anyToString{}, cond.second)+"\" AND ";
+        } else {
+            sqlQuery += cond.first + "=\""+visit(anyToString{}, cond.second)+"\"";
+        }
+        p += 1;
+    }
+
+    sqlQuery += ";";
+    cout << sqlQuery << endl;
+    return adapter->executeSqlQueryNonReturn(sqlQuery);
+}
+
 json Model::executeSqlQuery(const string& sql) {
     return adapter->executeSqlQuery(sql);
 }
