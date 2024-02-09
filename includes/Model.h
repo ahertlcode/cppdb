@@ -43,7 +43,7 @@ class Model {
         virtual json all();
         static json show(Model* model);
         virtual bool create(const map<string, anyType>& data);
-        static bool update(Model* model);
+        virtual bool update(const map<string, anyType>& condition, const map<string, anyType>& data);
         static bool destroy(Model* model);
         Model& where(const map<string, anyType>& conditions);
         Model& groupBy(const string& column);
