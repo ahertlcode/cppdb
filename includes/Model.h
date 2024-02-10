@@ -44,7 +44,7 @@ class Model {
         static json show(Model* model);
         virtual bool create(const map<string, anyType>& data);
         virtual bool update(const map<string, anyType>& condition, const map<string, anyType>& data);
-        static bool destroy(Model* model);
+        virtual bool destroy(const map<string, anyType>& condition);
         Model& where(const map<string, anyType>& conditions);
         Model& groupBy(const string& column);
         Model& orderBy(const string& column, OrderType type);

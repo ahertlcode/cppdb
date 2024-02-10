@@ -14,4 +14,8 @@ class UserController {
         bool update(const map<string, anyType>& condition, const map<string, anyType>& data) {
             return user.update(condition, data);
         }
+
+        bool destroy(const map<string, anyType>& cond) {
+            return user.destroy(cond);
+        }
 };

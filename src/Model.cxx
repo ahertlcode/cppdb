@@ -154,6 +154,26 @@ bool Model::update(const map<string, anyType>& condition, const map<string, anyT
     }
 
     sqlQuery += ";";
+    return adapter->executeSqlQueryNonReturn(sqlQuery);
+}
+
+bool Model::destroy(const map<string, anyType>& condition) {
+    if (adapter==nullptr){
+        adapter = createModel();
+    }
+    string tbl = getCurrentTable();
+    string sqlQuery = "DELETE FROM " + tbl + " WHERE ";
+    int l = 0;
+    for(auto& cond : condition) {
+        if (l < condition.size()-1 && condition.size() > 1) {
+            sqlQuery += cond.first + "=\"" + visit(anyToString{}, cond.second) + "\" AND ";
+        } else {
+            sqlQuery += cond.first + "=\""+visit(anyToString{}, cond.second)+"\"";
+        }
+        l += 1;
+    }
+
+    sqlQuery += ";";
     cout << sqlQuery << endl;
     return adapter->executeSqlQueryNonReturn(sqlQuery);
 }
