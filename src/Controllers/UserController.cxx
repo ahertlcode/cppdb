@@ -18,4 +18,8 @@ class UserController {
         bool destroy(const map<string, anyType>& cond) {
             return user.destroy(cond);
         }
+
+        json getOnlineUsers() {
+            return user.where({{"is_online",1}}).get({"name","email"});
+        }
 };

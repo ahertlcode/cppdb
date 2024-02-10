@@ -11,7 +11,7 @@ int main() {
     UserController user;
     json user1 = user.store({
         {"name", "Peter Apetu"},
-        {"email", "peteru7@ymail.com"},
+        {"email", "peteru9@ymail.com"},
         {"password", "0123456789"}
     });
     cout << "Single user: " << user1.dump() << endl;
@@ -21,5 +21,8 @@ int main() {
     cout << "Delete user: " << user3.dump() << endl;
     json data = user.index();
     cout << data.dump() << endl;
+
+    json userOnline = user.getOnlineUsers();
+    cout << "online  users: " << userOnline.dump() << endl;
     return 0;
 }

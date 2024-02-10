@@ -174,8 +174,64 @@ bool Model::destroy(const map<string, anyType>& condition) {
     }
 
     sqlQuery += ";";
-    cout << sqlQuery << endl;
     return adapter->executeSqlQueryNonReturn(sqlQuery);
+}
+
+Model& Model::where(const map<string,anyType>& condition) {
+    Model::whereConditions = condition;
+    return *this;
+}
+
+void Model::buildQuery() {
+    string tbl = getCurrentTable();
+    map<string, anyType>& criteria = whereConditions;
+    queryBuilt = "SELECT * FROM " + tbl + " WHERE ";
+    int i = 0;
+    for(auto& cond : criteria) {
+        if (i < criteria.size()-1 && criteria.size() > 1) {
+            queryBuilt += cond.first + "=\"" + visit(anyToString{}, cond.second) + "\" AND ";
+        } else {
+            queryBuilt += cond.first + "=\"" + visit(anyToString{}, cond.second) + "\"";
+        }
+        i += 1;
+    }
+    queryBuilt += ";";
+}
+
+json filterJsonObjects(const json& data, const stringList fields) {
+    json filtered;
+    for(const auto& obj : data) {
+        json fObj;
+        for(const auto& key : fields) {
+            if(obj.find(key) != obj.end()) {
+                fObj[key] = obj[key];
+            }
+        }
+        filtered.push_back(fObj);
+    }
+    return filtered;
+}
+
+json Model::get(const stringList& fld) {
+    if (adapter==nullptr){
+        adapter = createModel();
+    }
+    buildQuery();
+   
+    json data = adapter->executeSqlQuery(Model::queryBuilt);
+    stringList hiddenFields = getHiddenFields();
+    if (hiddenFields.size() > 0) {
+        for(auto& row : data) {
+            for(auto& fld : hiddenFields) {
+                row.erase(fld);
+            }
+        }
+    }
+
+    if (fld.size() > 0) {
+        data = filterJsonObjects(data, fld);
+    }
+    return data;
 }
 
 json Model::executeSqlQuery(const string& sql) {

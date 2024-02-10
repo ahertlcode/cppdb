@@ -45,7 +45,9 @@ class Model {
         virtual bool create(const map<string, anyType>& data);
         virtual bool update(const map<string, anyType>& condition, const map<string, anyType>& data);
         virtual bool destroy(const map<string, anyType>& condition);
-        Model& where(const map<string, anyType>& conditions);
+        virtual Model& where(const map<string, anyType>& conditions);
+        virtual json get(const stringList& fields={});
+
         Model& groupBy(const string& column);
         Model& orderBy(const string& column, OrderType type);
         // the current model has a relationship with relatedModel
@@ -53,7 +55,7 @@ class Model {
         //the current model belongs to relatedModel
         Model& belongsTo(Model* relatedModel, const string& foreignKey="", const string& primaryKey="");
         Model& hasMany(Model* relatedModel, const string& foreignKey="", const string& primaryKey="");
-        static json get(const stringList& fields={});
+        
         static json first();
     
     private:
@@ -63,6 +65,8 @@ class Model {
         stringList getTableColumns();
         stringList getHiddenFields();
         static unique_ptr<Model> createModel();
+        void buildQuery();
+        string queryBuilt;
         virtual json executeSqlQuery(const string& sql);
         virtual bool executeSqlQueryNonReturn(const string& sql);
 };
